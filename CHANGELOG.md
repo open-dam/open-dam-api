@@ -1,3 +1,13 @@
+## [1.1.2](https://github.com/open-dam/open-dam-api/compare/v1.1.1...v1.1.2) (2020-05-18)
+
+### Bug Fixes
+
+- rename tag workflow ([0a33c81](https://github.com/open-dam/open-dam-api/commit/0a33c812b1ba2bf6383c62de5edff5b75da47722))
+
+### Other
+
+- Merge branch 'master' of ssh://github.com/open-dam/open-dam-api ([ce20a0b](https://github.com/open-dam/open-dam-api/commit/ce20a0b3524b19f7b2c44a2ad0b123b22a37fac1))
+
 ## [1.1.1](https://github.com/open-dam/open-dam-api/compare/v1.1.0...v1.1.1) (2020-05-18)
 
 ### Bug Fixes
