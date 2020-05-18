@@ -1,3 +1,9 @@
+## [1.1.3](https://github.com/open-dam/open-dam-api/compare/v1.1.2...v1.1.3) (2020-05-18)
+
+### Bug Fixes
+
+- release when published ([5fb0a25](https://github.com/open-dam/open-dam-api/commit/5fb0a251e6c4667aad8c544bde058df4d7ad9d8e))
+
 ## [1.1.2](https://github.com/open-dam/open-dam-api/compare/v1.1.1...v1.1.2) (2020-05-18)
 
 ### Bug Fixes
