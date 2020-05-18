@@ -1,8 +1,7 @@
 name: Release Workflow
 on:
-  push:
-    tags:
-      - "*"
+  release:
+    types: [published]
 
 jobs:
   release:
