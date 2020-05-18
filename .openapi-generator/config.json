@@ -1,0 +1,5 @@
+{
+    "sourceFolder": "internal",
+    "packageName": "opendam",
+    "featureCORS": true
+}

@@ -1,0 +1,329 @@
+openapi: 3.0.0
+info:
+  title: Open DAM API
+  version: 0.0.0
+servers:
+- url: http://localhost:8080/
+paths:
+  /assets:
+    post:
+      operationId: getAssets
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/assets'
+          description: A list of assets
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api_error'
+          description: The standard error response
+  /asset:
+    post:
+      operationId: postAsset
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+          description: The response for the asynchronous creation of an asset
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api_error'
+          description: The standard error response
+  /asset/{asset_id}:
+    delete:
+      operationId: deleteAsset
+      parameters:
+      - explode: false
+        in: path
+        name: asset_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+          description: The response for the asynchronous creation of an asset
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api_error'
+          description: The standard error response
+    get:
+      operationId: getAsset
+      parameters:
+      - explode: false
+        in: path
+        name: asset_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/asset'
+          description: An asset is a single managed digital asset
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api_error'
+          description: The standard error response
+    put:
+      operationId: putAsset
+      parameters:
+      - explode: false
+        in: path
+        name: asset_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+          description: The response for the asynchronous creation of an asset
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api_error'
+          description: The standard error response
+  /job/{job_id}:
+    get:
+      operationId: getJob
+      parameters:
+      - explode: false
+        in: path
+        name: job_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+          description: The response for the asynchronous creation of an asset
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api_error'
+          description: The standard error response
+components:
+  schemas:
+    assets:
+      description: A list of assets
+      example:
+        assets:
+        - asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
+          kind: image
+          version:
+            number: 0
+          file:
+            name: avatar.jpg
+            source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+            content_type: image/jpg
+            size: 540205
+            width: 1024
+            height: 1820
+        - asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
+          kind: image
+          version:
+            number: 0
+          file:
+            name: avatar.jpg
+            source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+            content_type: image/jpg
+            size: 540205
+            width: 1024
+            height: 1820
+      properties:
+        assets:
+          items:
+            $ref: '#/components/schemas/asset'
+          type: array
+      type: object
+    asset:
+      description: An asset is a single managed digital asset
+      example:
+        asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
+        kind: image
+        version:
+          number: 0
+        file:
+          name: avatar.jpg
+          source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+          content_type: image/jpg
+          size: 540205
+          width: 1024
+          height: 1820
+      properties:
+        asset_id:
+          description: The unique id of the asset
+          format: uuid
+          type: string
+        kind:
+          description: The kind of media
+          enum:
+          - image
+          - video
+          - audio
+          - text
+          type: string
+        version:
+          $ref: '#/components/schemas/version'
+        file:
+          $ref: '#/components/schemas/asset_file'
+        formats:
+          description: additional assets/files associated with the asset
+          items:
+            $ref: '#/components/schemas/asset'
+          type: array
+        tags:
+          description: A list of metadata tags associated with the asset
+          items:
+            type: string
+          type: array
+        metadata:
+          additionalProperties: true
+          description: Any user supplied metadata for the asset
+          example:
+            project: open-dam
+            rating: 5
+          type: object
+      required:
+      - asset_id
+      - file
+      - kind
+      - version
+      type: object
+    version:
+      description: version data of an asset
+      example:
+        number: 0
+        timestamp: 1589764285
+        job_id: 42587c94-98a7-11ea-bb37-0242ac130002
+      properties:
+        number:
+          description: The version number
+          type: number
+        timestamp:
+          description: A point in time represented as milliseconds from the Epoch
+            (UTC)
+          type: number
+        job_id:
+          format: uuid
+          type: string
+      required:
+      - job_id
+      - number
+      - timestamp
+      type: object
+    asset_file:
+      description: The file associated with an asset or format
+      example:
+        name: avatar.jpg
+        source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+        content_type: image/jpg
+        size: 540205
+        width: 1024
+        height: 1820
+      properties:
+        name:
+          description: the name of the file
+          type: string
+        source:
+          description: A URL address to the file content
+          type: string
+        content_type:
+          description: the http Content-Type used with the file
+          type: string
+        size:
+          description: The size of the file in bytes
+          type: number
+        width:
+          description: The width of the file
+          type: number
+        height:
+          description: The height of the file
+          type: number
+        duration:
+          description: The duration of the file in seconds
+          format: float
+          type: number
+      required:
+      - content_type
+      - name
+      - size
+      - source
+      type: object
+    job:
+      description: The state of a single job
+      example:
+        job_id: 42587c94-98a7-11ea-bb37-0242ac130002
+        state: completed
+        asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
+      properties:
+        id:
+          description: The unique id of the job
+          format: uuid
+          type: string
+        state:
+          description: The state of the job
+          enum:
+          - queued
+          - processing
+          - failed
+          - completed
+          - cancelled
+          type: string
+        asset_id:
+          description: The asset that this job is processing work for
+          format: uuid
+          type: string
+      required:
+      - asset_id
+      - id
+      - state
+      type: object
+    api_error:
+      example:
+        code: 404
+        message: asset not found
+      properties:
+        code:
+          description: A HTTP status code applicable to this problem
+          type: number
+        message:
+          description: A description of the error that occurred
+          type: string
+      required:
+      - code
+      - message
+      type: object
