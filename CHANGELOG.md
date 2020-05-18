@@ -1,3 +1,13 @@
+# [1.1.0](https://github.com/open-dam/open-dam-api/compare/v1.0.0...v1.1.0) (2020-05-18)
+
+### Features
+
+- generate go server and ts client ([dc38093](https://github.com/open-dam/open-dam-api/commit/dc3809381a642d54dd7613a23087512475166df8))
+
+### Other
+
+- Merge branch 'master' of ssh://github.com/open-dam/open-dam-api ([12d9c97](https://github.com/open-dam/open-dam-api/commit/12d9c97a8455ae05583ce345a41f77b85a100a73))
+
 # 1.0.0 (2020-05-18)
 
 ### Features
