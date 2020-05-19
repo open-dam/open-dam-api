@@ -21,35 +21,3 @@ jobs:
         run: |
           docker login docker.pkg.github.com -u Jesse0Michael -p ${{ secrets.GITHUB_SECRET }}
           docker push docker.pkg.github.com/open-dam/open-dam-api/open-dam-api:${REF##*/}
-
-  release-client:
-    env:
-      REF: ${{ github.ref }}
-    name: Release Node Client
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: Node Setup
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://npm.pkg.github.com/
-          scope: "@open-dam"
-
-      - name: Build Client
-        working-directory: client/ts
-        run: |
-          npm install
-          npm run build
-
-      - name: Publish Client
-        working-directory: client/ts
-        run: |
-          npm config set //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN
-          npm config set scope "open-dam"
-          npm version ${REF##*/}
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_SECRET }}

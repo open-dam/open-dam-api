@@ -4,9 +4,6 @@ gen:
 	docker run -v ${PWD}:/open-dam openapitools/openapi-generator-cli generate -i /open-dam/api/openapi.yaml -g go-server -o /open-dam -c /open-dam/.openapi-generator/config.json --git-user-id open-dam --git-repo-id open-dam-api
 	# -e GO_POST_PROCESS_FILE="gofmt -w"
 	#  -t /open-dam/.openapi-generator/templates/go-server
-	
-
-	docker run -v ${PWD}:/open-dam  openapitools/openapi-generator-cli generate -i /open-dam/api/openapi.yaml -g typescript-node -o /open-dam/client/ts/ --git-user-id open-dam --git-repo-id open-dam-api --additional-properties=npmName=@open-dam/open-dam-api,npmVersion=1.0.0
 
 gen-docs:
 	# Requrires [Redoc](https://github.com/Redocly/redoc) 
