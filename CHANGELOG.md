@@ -1,3 +1,9 @@
+## [1.1.4](https://github.com/open-dam/open-dam-api/compare/v1.1.3...v1.1.4) (2020-05-19)
+
+### Bug Fixes
+
+- move ts client to its own repo ([b56eb90](https://github.com/open-dam/open-dam-api/commit/b56eb90fca6f44e47d5168e2bb4f2177700209f2))
+
 ## [1.1.3](https://github.com/open-dam/open-dam-api/compare/v1.1.2...v1.1.3) (2020-05-18)
 
 ### Bug Fixes
