@@ -5,7 +5,7 @@ on:
       - master
 
 jobs:
-  build:
+  tag:
     name: tag
     runs-on: ubuntu-latest
     steps:
@@ -15,4 +15,4 @@ jobs:
       - name: Semantic Release
         uses: ridedott/release-me-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
