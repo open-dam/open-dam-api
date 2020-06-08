@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/open-dam/open-dam-api/compare/v1.2.0...v1.2.1) (2020-06-08)
+
+### Bug Fixes
+
+- work around github secrets ([5ebe907](https://github.com/open-dam/open-dam-api/commit/5ebe907a3e90967415980a9d3043f6ab0d79266d))
+
 # [1.2.0](https://github.com/open-dam/open-dam-api/compare/v1.1.4...v1.2.0) (2020-06-08)
 
 ### Features
