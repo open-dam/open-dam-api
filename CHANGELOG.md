@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/open-dam/open-dam-api/compare/v1.1.4...v1.2.0) (2020-06-08)
+
+### Features
+
+- api with service methods and document store ([19424e2](https://github.com/open-dam/open-dam-api/commit/19424e201586f12a376b0dbad66d4559660a4c50))
+
 ## [1.1.4](https://github.com/open-dam/open-dam-api/compare/v1.1.3...v1.1.4) (2020-05-19)
 
 ### Bug Fixes
