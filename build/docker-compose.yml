@@ -1,0 +1,32 @@
+version: "3.5"
+
+services:
+  #######################################################
+  # Open DAM API
+  #######################################################
+  open_dam_api:
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile
+    restart: unless-stopped
+    environment:
+      CONNECTION: mem://collection/assetid
+      ENVIRONMENT: local
+    ports:
+      - "8080:8080"
+    networks:
+      - data
+
+#######################################################
+# Networking
+#######################################################
+networks:
+  data:
+    name: opendam
+    driver: bridge
+
+#######################################################
+# Volumes
+#######################################################
+volumes:
+  open-data:

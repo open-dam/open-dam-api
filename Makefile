@@ -1,10 +1,5 @@
 .PHONY: build test
 
-gen:
-	docker run -v ${PWD}:/open-dam openapitools/openapi-generator-cli generate -i /open-dam/api/openapi.yaml -g go-server -o /open-dam -c /open-dam/.openapi-generator/config.json --git-user-id open-dam --git-repo-id open-dam-api
-	# -e GO_POST_PROCESS_FILE="gofmt -w"
-	#  -t /open-dam/.openapi-generator/templates/go-server
-
 gen-docs:
 	# Requrires [Redoc](https://github.com/Redocly/redoc) 
 	# `npm install redoc-cli -g --save`
@@ -24,4 +19,4 @@ test-coverage:
 	go test -coverpkg ./internal/... -coverprofile coverage/coverage.out ./... && go tool cover -html=coverage/coverage.out
 
 run:
-	docker run -p 8080:8080 open-dam-api
+	docker run -p 8080:8080 -e ENVIRONMENT=local -e CONNECTION=mem://collection/assetid open-dam-api

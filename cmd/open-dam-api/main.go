@@ -13,16 +13,16 @@ import (
 	"log"
 	"net/http"
 
-	opendam "github.com/open-dam/open-dam-api/internal"
+	"github.com/open-dam/open-dam-api/internal/server"
 )
 
 func main() {
 	log.Printf("Server started")
 
-	DefaultApiService := opendam.NewDefaultApiService()
-	DefaultApiController := opendam.NewDefaultApiController(DefaultApiService)
+	service := server.NewApiService()
+	controller := server.NewController(service)
 
-	router := opendam.NewRouter(DefaultApiController)
+	router := server.NewRouter(controller)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

@@ -6,7 +6,7 @@ servers:
 - url: http://localhost:8080/
 paths:
   /assets:
-    post:
+    get:
       operationId: getAssets
       responses:
         "200":
@@ -21,7 +21,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/api_error'
           description: The standard error response
-  /asset:
     post:
       operationId: postAsset
       responses:
@@ -37,7 +36,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/api_error'
           description: The standard error response
-  /asset/{asset_id}:
+  /assets/{asset_id}:
     delete:
       operationId: deleteAsset
       parameters:
@@ -97,6 +96,12 @@ paths:
           format: uuid
           type: string
         style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/asset_update'
+        required: true
       responses:
         "202":
           content:
@@ -189,13 +194,7 @@ components:
           format: uuid
           type: string
         kind:
-          description: The kind of media
-          enum:
-          - image
-          - video
-          - audio
-          - text
-          type: string
+          $ref: '#/components/schemas/kind'
         version:
           $ref: '#/components/schemas/version'
         file:
@@ -223,6 +222,41 @@ components:
       - kind
       - version
       type: object
+    asset_update:
+      description: A limited view of an asset with only editable fields. Formats,
+        tags, and metadata are merged with any existing values
+      example:
+        kind: image
+        file:
+          name: avatar.jpg
+          source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+          content_type: image/jpg
+          size: 540205
+          width: 1024
+          height: 1820
+      properties:
+        kind:
+          $ref: '#/components/schemas/kind'
+        file:
+          $ref: '#/components/schemas/asset_file'
+        formats:
+          description: additional assets/files associated with the asset
+          items:
+            $ref: '#/components/schemas/asset'
+          type: array
+        tags:
+          description: A list of metadata tags associated with the asset
+          items:
+            type: string
+          type: array
+        metadata:
+          additionalProperties: true
+          description: Any user supplied metadata for the asset
+          example:
+            project: open-dam
+            rating: 5
+          type: object
+      type: object
     version:
       description: version data of an asset
       example:
@@ -245,6 +279,14 @@ components:
       - number
       - timestamp
       type: object
+    kind:
+      description: The kind of media
+      enum:
+      - image
+      - video
+      - audio
+      - text
+      type: string
     asset_file:
       description: The file associated with an asset or format
       example:

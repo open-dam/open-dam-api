@@ -7,15 +7,16 @@ RUN apk update && apk add --no-cache git ca-certificates && update-ca-certificat
 
 # Copy project files
 WORKDIR /go/src
-COPY . .
+COPY go.mod .
+COPY go.sum .
 
 # Fetch dependencies
 RUN go mod download
-RUN go mod verify
+COPY . .
 
 # Build project
 ENV CGO_ENABLED=0
-RUN go build -a -installsuffix cgo -o open-dam-api ./cmd/open-dam-api
+RUN go build -o open-dam-api ./cmd/open-dam-api
 
 FROM scratch AS runtime
 
