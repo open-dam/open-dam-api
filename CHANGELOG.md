@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/open-dam/open-dam-api/compare/v1.2.1...v1.2.2) (2020-06-08)
+
+### Bug Fixes
+
+- use dockerfile ([9c53ceb](https://github.com/open-dam/open-dam-api/commit/9c53cebd5deee54d3edfef5ebe51f1c6a466eb9c))
+
 ## [1.2.1](https://github.com/open-dam/open-dam-api/compare/v1.2.0...v1.2.1) (2020-06-08)
 
 ### Bug Fixes
