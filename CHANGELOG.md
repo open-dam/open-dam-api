@@ -1,3 +1,9 @@
+## [1.2.4](https://github.com/open-dam/open-dam-api/compare/v1.2.3...v1.2.4) (2020-06-12)
+
+### Bug Fixes
+
+- fix task schema ([110b496](https://github.com/open-dam/open-dam-api/commit/110b49634747473247708abab19cd900a85bbc32))
+
 ## [1.2.3](https://github.com/open-dam/open-dam-api/compare/v1.2.2...v1.2.3) (2020-06-12)
 
 ### Bug Fixes
