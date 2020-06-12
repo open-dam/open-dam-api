@@ -21,7 +21,7 @@ func NewController(s ApiServicer) *Controller {
 func (c *Controller) GetAssets(w http.ResponseWriter, r *http.Request) {
 	result, err := c.service.GetAssets()
 	if err != nil {
-		w.WriteHeader(500)
+		EncodeErrorResponse(err, w)
 		return
 	}
 
@@ -30,9 +30,14 @@ func (c *Controller) GetAssets(w http.ResponseWriter, r *http.Request) {
 
 // PostAsset -
 func (c *Controller) PostAsset(w http.ResponseWriter, r *http.Request) {
-	result, err := c.service.PostAsset()
+	assetCreate := AssetCreate{}
+	if err := json.NewDecoder(r.Body).Decode(&assetCreate); err != nil {
+		EncodeErrorResponse(err, w)
+		return
+	}
+	result, err := c.service.PostAsset(assetCreate)
 	if err != nil {
-		w.WriteHeader(500)
+		EncodeErrorResponse(err, w)
 		return
 	}
 
@@ -45,7 +50,7 @@ func (c *Controller) GetAsset(w http.ResponseWriter, r *http.Request) {
 	assetId := params["asset_id"]
 	result, err := c.service.GetAsset(assetId)
 	if err != nil {
-		w.WriteHeader(500)
+		EncodeErrorResponse(err, w)
 		return
 	}
 
@@ -58,13 +63,12 @@ func (c *Controller) PutAsset(w http.ResponseWriter, r *http.Request) {
 	assetId := params["asset_id"]
 	assetUpdate := AssetUpdate{}
 	if err := json.NewDecoder(r.Body).Decode(&assetUpdate); err != nil {
-		w.WriteHeader(500)
+		EncodeErrorResponse(err, w)
 		return
 	}
 	result, err := c.service.PutAsset(assetId, assetUpdate)
 	if err != nil {
-		w.WriteHeader(500)
-		w.Write([]byte(err.Error()))
+		EncodeErrorResponse(err, w)
 		return
 	}
 
@@ -77,7 +81,7 @@ func (c *Controller) DeleteAsset(w http.ResponseWriter, r *http.Request) {
 	assetId := params["asset_id"]
 	result, err := c.service.DeleteAsset(assetId)
 	if err != nil {
-		w.WriteHeader(500)
+		EncodeErrorResponse(err, w)
 		return
 	}
 
@@ -90,7 +94,23 @@ func (c *Controller) GetJob(w http.ResponseWriter, r *http.Request) {
 	jobId := params["job_id"]
 	result, err := c.service.GetJob(jobId)
 	if err != nil {
-		w.WriteHeader(500)
+		EncodeErrorResponse(err, w)
+		return
+	}
+
+	EncodeJSONResponse(result, nil, w)
+}
+
+// PostJob -
+func (c *Controller) PostJob(w http.ResponseWriter, r *http.Request) {
+	jobCreate := JobCreate{}
+	if err := json.NewDecoder(r.Body).Decode(&jobCreate); err != nil {
+		EncodeErrorResponse(err, w)
+		return
+	}
+	result, err := c.service.PostJob(jobCreate)
+	if err != nil {
+		EncodeErrorResponse(err, w)
 		return
 	}
 

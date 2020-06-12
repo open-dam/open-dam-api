@@ -10,10 +10,25 @@ services:
       dockerfile: ./build/Dockerfile
     restart: unless-stopped
     environment:
+      BROKER: amqp://rabbitmq:5672/
+      RESULT_BACKEND: "amqp://rabbitmq:5672/"
       CONNECTION: mem://collection/assetid
       ENVIRONMENT: local
+      LOG_LEVEL: debug
     ports:
       - "8080:8080"
+    networks:
+      - data
+
+  #######################################################
+  # Broker
+  #######################################################
+  rabbitmq:
+    image: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - data
 

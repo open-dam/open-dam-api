@@ -19,3 +19,17 @@ type AssetUpdate struct {
 	// Any user supplied metadata for the asset
 	Metadata map[string]interface{} `json:"metadata,omitempty"`
 }
+
+type AssetCreate struct {
+	URL     string `json:"url"`
+	AssetID string `json:"asset_id"`
+}
+
+type JobCreate struct {
+	Tasks []Task `json:"tasks"`
+}
+
+type Task struct {
+	Name string   `json:"name"`
+	Args []string `json:"args"`
+}

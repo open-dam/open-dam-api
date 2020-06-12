@@ -5,10 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/RichardKnop/machinery/v1"
+	"github.com/RichardKnop/machinery/v1/config"
+	"github.com/RichardKnop/machinery/v1/log"
+	"github.com/RichardKnop/machinery/v1/tasks"
+	"github.com/gabriel-vasile/mimetype"
+	"github.com/google/uuid"
 	"github.com/open-dam/open-dam-worker/pkg/opendam"
+	"github.com/sirupsen/logrus"
 	"gocloud.dev/docstore"
 	"gocloud.dev/gcerrors"
 )
@@ -16,35 +25,58 @@ import (
 // ApiServicer defines the api actions for the API
 type ApiServicer interface {
 	GetAssets() (interface{}, error)
-	PostAsset() (interface{}, error)
+	PostAsset(AssetCreate) (interface{}, error)
 	GetAsset(string) (interface{}, error)
 	PutAsset(string, AssetUpdate) (interface{}, error)
 	DeleteAsset(string) (interface{}, error)
 	GetJob(string) (interface{}, error)
+	PostJob(JobCreate) (interface{}, error)
 }
 
 // ApiService is a service that implents the logic for the ApiServicer
 // This service should implement the business logic for every endpoint for the API.
 // Include any external packages or services that will be required by this service.
 type ApiService struct {
-	c *docstore.Collection
+	docs      *docstore.Collection
+	machinery *machinery.Server
+	client    *http.Client
+	logger    *logrus.Entry
 }
 
 // NewApiService creates an api service
 func NewApiService() ApiServicer {
+	logger := opendam.Logger()
+	log.Set(logger)
+
+	cnf, err := config.NewFromEnvironment(true)
+	if err != nil {
+		logger.WithError(err).Fatal("failed to build machinery config from environment")
+	}
+
+	logger.WithField("config", cnf).Debug("got config")
+
+	server, err := machinery.NewServer(cnf)
+	if err != nil {
+		logger.WithError(err).Fatal("failed to start machinery server")
+	}
+
 	c, err := opendam.DocStoreFactory(os.Getenv("CONNECTION"))
 	if err != nil {
-		fmt.Println("WTFFF")
+		logger.WithError(err).Fatal("failed to open document store connection")
 	}
+
 	return &ApiService{
-		c: c,
+		docs:      c,
+		machinery: server,
+		client:    &http.Client{},
+		logger:    logger,
 	}
 }
 
 // GetAssets -
 func (s *ApiService) GetAssets() (interface{}, error) {
 	var assets []opendam.Asset
-	iter := s.c.Query().Get(context.Background())
+	iter := s.docs.Query().Get(context.Background())
 	defer iter.Stop()
 
 	// Query.Get returns an iterator. Call Next on it until io.EOF.
@@ -63,16 +95,105 @@ func (s *ApiService) GetAssets() (interface{}, error) {
 }
 
 // PostAsset -
-func (s *ApiService) PostAsset() (interface{}, error) {
-	// TODO - update PostAsset with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'PostAsset' not implemented")
+func (s *ApiService) PostAsset(assetCreate AssetCreate) (interface{}, error) {
+	assetID := assetCreate.AssetID
+	if assetID != "" {
+		if _, err := s.GetAsset(assetID); err != nil {
+			return nil, err
+		}
+	}
+
+	if assetID == "" {
+		assetID = uuid.New().String()
+	}
+
+	kind, contentType, err := s.assetKind(assetCreate.URL)
+	if err != nil {
+		return nil, err
+	}
+
+	extract, _ := tasks.NewSignature("extract", []tasks.Arg{
+		{Type: "string", Value: assetCreate.URL},
+		{Type: "string", Value: assetID},
+	})
+	sigs := []*tasks.Signature{extract}
+	switch kind {
+	case "image":
+		imageAnalysis, _ := tasks.NewSignature("imageanalysis", []tasks.Arg{
+			{Type: "string", Value: assetCreate.URL},
+			{Type: "string", Value: assetID},
+		})
+		imageCreation, _ := tasks.NewSignature("imagecreation", []tasks.Arg{
+			{Type: "string", Value: assetCreate.URL},
+			{Type: "string", Value: assetID},
+		})
+		sigs = append(sigs, imageAnalysis, imageCreation)
+	case "audio":
+		soundwave, _ := tasks.NewSignature("soundwave", []tasks.Arg{
+			{Type: "string", Value: assetCreate.URL},
+			{Type: "string", Value: assetID},
+		})
+		sigs = append(sigs, soundwave)
+
+	}
+
+	chain, _ := tasks.NewChain(sigs...)
+	_, err = s.machinery.SendChain(chain)
+	if err != nil {
+		return nil, fmt.Errorf("send chain err %s", err.Error())
+	}
+
+	asset, err := s.PutAsset(assetID, AssetUpdate{
+		Kind: kind,
+		File: opendam.File{
+			Name:        "", //TODO how do we get filename if frontend client is uploading files to storage
+			Source:      assetCreate.URL,
+			ContentType: contentType,
+		},
+	})
+	if err != nil {
+		// TODO cancel job somehow
+		return nil, err
+	}
+
+	// TODO handle "job id"
+	return asset, nil
+}
+
+func (s *ApiService) assetKind(URL string) (string, string, error) {
+	resp, err := s.client.Get(URL)
+	if err != nil {
+		return "", "", err
+	}
+	defer resp.Body.Close()
+	mime, err := mimetype.DetectReader(resp.Body)
+	if err != nil {
+		return "", "", err
+	}
+	m := strings.ToLower(mime.String())
+	s.logger.WithFields(logrus.Fields{
+		"mime":         m,
+		"ext":          mime.Extension(),
+		"content_type": resp.Header.Get("Content-Type"),
+	}).Debug("mime type detected")
+
+	if strings.HasPrefix(m, "image") {
+		return "image", m, nil
+	} else if strings.HasPrefix(m, "audio") {
+		return "audio", m, nil
+	} else if strings.HasPrefix(m, "video") {
+		return "video", m, nil
+	} else if strings.HasPrefix(m, "text") {
+		return "text", m, nil
+	}
+	return "unknown", m, nil
+
 }
 
 // GetAsset -
 func (s *ApiService) GetAsset(assetId string) (interface{}, error) {
 	asset := opendam.Asset{AssetID: assetId}
-	err := s.c.Get(context.Background(), &asset)
+	err := s.docs.Get(context.Background(), &asset)
 	return &asset, err
 }
 
@@ -81,7 +202,7 @@ func (s *ApiService) PutAsset(assetId string, assetUpdate AssetUpdate) (interfac
 	//TODO use distributed lock on asset
 	asset := opendam.Asset{AssetID: assetId}
 	notFound := false
-	if err := s.c.Get(context.Background(), &asset); err != nil {
+	if err := s.docs.Get(context.Background(), &asset); err != nil {
 		if gcerrors.Code(err) != gcerrors.NotFound {
 			return nil, err
 		}
@@ -92,6 +213,9 @@ func (s *ApiService) PutAsset(assetId string, assetUpdate AssetUpdate) (interfac
 	if assetUpdate.Kind != "" {
 		asset.Kind = assetUpdate.Kind
 	}
+
+	//TODO merge file data
+	asset.File = &assetUpdate.File
 
 	//TODO handle duplicate
 	asset.Formats = append(asset.Formats, assetUpdate.Formats...)
@@ -107,11 +231,11 @@ func (s *ApiService) PutAsset(assetId string, assetUpdate AssetUpdate) (interfac
 	asset.Version.Timestamp = time.Now().Unix()
 
 	if notFound {
-		if err := s.c.Create(context.Background(), &asset); err != nil {
+		if err := s.docs.Create(context.Background(), &asset); err != nil {
 			return nil, err
 		}
 	}
-	if err := s.c.Replace(context.Background(), &asset); err != nil {
+	if err := s.docs.Replace(context.Background(), &asset); err != nil {
 		return nil, err
 	}
 
@@ -120,7 +244,8 @@ func (s *ApiService) PutAsset(assetId string, assetUpdate AssetUpdate) (interfac
 
 // DeleteAsset -
 func (s *ApiService) DeleteAsset(assetId string) (interface{}, error) {
-	err := s.c.Delete(context.Background(), &opendam.Asset{AssetID: assetId})
+	// TODO this needs to trigger a delete workflow to cleanup all assets
+	err := s.docs.Delete(context.Background(), &opendam.Asset{AssetID: assetId})
 	return nil, err
 }
 
@@ -129,4 +254,24 @@ func (s *ApiService) GetJob(jobId string) (interface{}, error) {
 	// TODO - update GetJob with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	return nil, errors.New("service method 'GetJob' not implemented")
+}
+
+// PostJob -
+func (s *ApiService) PostJob(jobCreate JobCreate) (interface{}, error) {
+	var sigs []*tasks.Signature
+	for _, t := range jobCreate.Tasks {
+		var args []tasks.Arg
+		for _, a := range t.Args {
+			args = append(args, tasks.Arg{Type: "string", Value: a})
+		}
+		task, _ := tasks.NewSignature(t.Name, args)
+		sigs = append(sigs, task)
+	}
+	chain, _ := tasks.NewChain(sigs...)
+	_, err := s.machinery.SendChain(chain)
+	if err != nil {
+		return nil, fmt.Errorf("send chain err %s", err.Error())
+	}
+
+	return nil, nil
 }

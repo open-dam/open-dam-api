@@ -19,4 +19,4 @@ test-coverage:
 	go test -coverpkg ./internal/... -coverprofile coverage/coverage.out ./... && go tool cover -html=coverage/coverage.out
 
 run:
-	docker run -p 8080:8080 -e ENVIRONMENT=local -e CONNECTION=mem://collection/assetid open-dam-api
+	docker-compose --file ./build/docker-compose.yml --project-directory . up --build

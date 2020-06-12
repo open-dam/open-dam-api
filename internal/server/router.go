@@ -8,12 +8,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// A Route defines the parameters for an api endpoint
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+type ApiError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 // NewRouter creates a new router for any number of api routers
@@ -26,6 +23,7 @@ func NewRouter(c *Controller) *mux.Router {
 	router.Path("/assets/{asset_id}").Methods(http.MethodGet).Name("GetAsset").HandlerFunc(c.GetAsset)
 	router.Path("/assets/{asset_id}").Methods(http.MethodPut).Name("PutAsset").HandlerFunc(c.PutAsset)
 	router.Path("/assets/{asset_id}").Methods(http.MethodDelete).Name("DeleteAsset").HandlerFunc(c.DeleteAsset)
+	router.Path("/jobs").Methods(http.MethodPost).Name("PostJob").HandlerFunc(c.PostJob)
 	router.Path("/jobs/{job_id}").Methods(http.MethodGet).Name("GetJob").HandlerFunc(c.GetJob)
 
 	return router
@@ -41,4 +39,13 @@ func EncodeJSONResponse(i interface{}, status *int, w http.ResponseWriter) error
 	}
 
 	return json.NewEncoder(w).Encode(i)
+}
+
+// EncodeErrorResponse writes the error response for any error that occurred during the request
+func EncodeErrorResponse(err error, w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	status := http.StatusInternalServerError
+
+	w.WriteHeader(status)
+	return json.NewEncoder(w).Encode(&ApiError{Code: status, Message: err.Error()})
 }

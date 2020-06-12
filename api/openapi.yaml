@@ -23,6 +23,12 @@ paths:
           description: The standard error response
     post:
       operationId: postAsset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/asset_create'
+        required: true
       responses:
         "202":
           content:
@@ -115,7 +121,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/api_error'
           description: The standard error response
-  /job/{job_id}:
+  /jobs:
+    post:
+      operationId: postJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/job_create'
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+          description: The response for the asynchronous creation of an asset
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api_error'
+          description: The standard error response
+  /jobs/{job_id}:
     get:
       operationId: getJob
       parameters:
@@ -222,6 +250,21 @@ components:
       - kind
       - version
       type: object
+    asset_create:
+      description: The information required to start the workflow to create or update an asset
+      example:
+        url: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+        asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
+      properties:
+        url:
+          type: string
+        asset_id:
+          description: The unique id of the asset
+          format: uuid
+          type: string
+      required:
+      - url
+      type: object
     asset_update:
       description: A limited view of an asset with only editable fields. Formats,
         tags, and metadata are merged with any existing values
@@ -286,6 +329,7 @@ components:
       - video
       - audio
       - text
+      - unknown
       type: string
     asset_file:
       description: The file associated with an asset or format
@@ -353,6 +397,38 @@ components:
       - asset_id
       - id
       - state
+      type: object
+    job_create:
+      description: The task information for a workflow
+      example:
+        tasks:
+          - task: extract
+            args:
+              - s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+              - 3652fdf2-98a7-11ea-bb37-0242ac130002
+          - task: imageanalysis
+      properties:
+        tasks:
+          $ref: '#/components/schemas/task'
+      type: object
+    tasks:
+      description: a task to perform on an asset
+      example:
+        task: extract
+        args: 
+          - s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+      properties:
+        task:
+          description: The name of the task 
+          type: string
+        args:
+          description: An array of arguments to use for the task, if left empty will use the results of the previous task.
+            must match the expected arguments for the requested task.
+          items:
+            type: string
+          type: array
+      required:
+      - name
       type: object
     api_error:
       example:

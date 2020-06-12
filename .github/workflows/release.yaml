@@ -15,7 +15,7 @@ jobs:
 
       - name: Build
         run: |
-          docker build -t docker.pkg.github.com/open-dam/open-dam-api/open-dam-api:${REF##*/} -f ./build/Dockerfile .
+          docker build -t docker.pkg.github.com/open-dam/open-dam-api/open-dam-api:${REF##*/} -t docker.pkg.github.com/open-dam/open-dam-api/open-dam-api:latest  -f ./build/Dockerfile .
 
       - name: Publish Server
         run: |
