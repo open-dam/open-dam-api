@@ -1,3 +1,9 @@
+## [1.2.3](https://github.com/open-dam/open-dam-api/compare/v1.2.2...v1.2.3) (2020-06-12)
+
+### Bug Fixes
+
+- add post assets/jobs ([e717269](https://github.com/open-dam/open-dam-api/commit/e717269712042969b7c5159eb3604b9de788bb60))
+
 ## [1.2.2](https://github.com/open-dam/open-dam-api/compare/v1.2.1...v1.2.2) (2020-06-08)
 
 ### Bug Fixes
