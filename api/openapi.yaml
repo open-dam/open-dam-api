@@ -409,9 +409,11 @@ components:
           - task: imageanalysis
       properties:
         tasks:
-          $ref: '#/components/schemas/task'
+          items:
+            $ref: '#/components/schemas/task'
+          type: array
       type: object
-    tasks:
+    task:
       description: a task to perform on an asset
       example:
         task: extract
