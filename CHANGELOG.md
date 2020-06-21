@@ -1,3 +1,9 @@
+## [1.2.5](https://github.com/open-dam/open-dam-api/compare/v1.2.4...v1.2.5) (2020-06-21)
+
+### Bug Fixes
+
+- upload url on post ([32639cf](https://github.com/open-dam/open-dam-api/commit/32639cffef84f225829f3742cec46a7ccdf7937f))
+
 ## [1.2.4](https://github.com/open-dam/open-dam-api/compare/v1.2.3...v1.2.4) (2020-06-12)
 
 ### Bug Fixes
