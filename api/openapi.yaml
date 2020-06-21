@@ -3,7 +3,7 @@ info:
   title: Open DAM API
   version: 0.0.0
 servers:
-- url: http://localhost:8080/
+  - url: http://localhost:8080/
 paths:
   /assets:
     get:
@@ -13,13 +13,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/assets'
+                $ref: "#/components/schemas/assets"
           description: A list of assets
         default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_error'
+                $ref: "#/components/schemas/api_error"
           description: The standard error response
     post:
       operationId: postAsset
@@ -27,99 +27,99 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/asset_create'
+              $ref: "#/components/schemas/asset_create"
         required: true
       responses:
         "202":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/job'
+                $ref: "#/components/schemas/job"
           description: The response for the asynchronous creation of an asset
         default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_error'
+                $ref: "#/components/schemas/api_error"
           description: The standard error response
   /assets/{asset_id}:
     delete:
       operationId: deleteAsset
       parameters:
-      - explode: false
-        in: path
-        name: asset_id
-        required: true
-        schema:
-          format: uuid
-          type: string
-        style: simple
+        - explode: false
+          in: path
+          name: asset_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+          style: simple
       responses:
         "202":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/job'
+                $ref: "#/components/schemas/job"
           description: The response for the asynchronous creation of an asset
         default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_error'
+                $ref: "#/components/schemas/api_error"
           description: The standard error response
     get:
       operationId: getAsset
       parameters:
-      - explode: false
-        in: path
-        name: asset_id
-        required: true
-        schema:
-          format: uuid
-          type: string
-        style: simple
+        - explode: false
+          in: path
+          name: asset_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+          style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/asset'
+                $ref: "#/components/schemas/asset"
           description: An asset is a single managed digital asset
         default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_error'
+                $ref: "#/components/schemas/api_error"
           description: The standard error response
     put:
       operationId: putAsset
       parameters:
-      - explode: false
-        in: path
-        name: asset_id
-        required: true
-        schema:
-          format: uuid
-          type: string
-        style: simple
+        - explode: false
+          in: path
+          name: asset_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/asset_update'
+              $ref: "#/components/schemas/asset_update"
         required: true
       responses:
         "202":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/job'
+                $ref: "#/components/schemas/job"
           description: The response for the asynchronous creation of an asset
         default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_error'
+                $ref: "#/components/schemas/api_error"
           description: The standard error response
   /jobs:
     post:
@@ -128,45 +128,45 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/job_create'
+              $ref: "#/components/schemas/job_create"
         required: true
       responses:
         "202":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/job'
+                $ref: "#/components/schemas/job"
           description: The response for the asynchronous creation of an asset
         default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_error'
+                $ref: "#/components/schemas/api_error"
           description: The standard error response
   /jobs/{job_id}:
     get:
       operationId: getJob
       parameters:
-      - explode: false
-        in: path
-        name: job_id
-        required: true
-        schema:
-          format: uuid
-          type: string
-        style: simple
+        - explode: false
+          in: path
+          name: job_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+          style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/job'
+                $ref: "#/components/schemas/job"
           description: The response for the asynchronous creation of an asset
         default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_error'
+                $ref: "#/components/schemas/api_error"
           description: The standard error response
 components:
   schemas:
@@ -174,32 +174,32 @@ components:
       description: A list of assets
       example:
         assets:
-        - asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
-          kind: image
-          version:
-            number: 0
-          file:
-            name: avatar.jpg
-            source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
-            content_type: image/jpg
-            size: 540205
-            width: 1024
-            height: 1820
-        - asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
-          kind: image
-          version:
-            number: 0
-          file:
-            name: avatar.jpg
-            source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
-            content_type: image/jpg
-            size: 540205
-            width: 1024
-            height: 1820
+          - asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
+            kind: image
+            version:
+              number: 0
+            file:
+              name: avatar.jpg
+              source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+              content_type: image/jpg
+              size: 540205
+              width: 1024
+              height: 1820
+          - asset_id: 3652fdf2-98a7-11ea-bb37-0242ac130002
+            kind: image
+            version:
+              number: 0
+            file:
+              name: avatar.jpg
+              source: s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
+              content_type: image/jpg
+              size: 540205
+              width: 1024
+              height: 1820
       properties:
         assets:
           items:
-            $ref: '#/components/schemas/asset'
+            $ref: "#/components/schemas/asset"
           type: array
       type: object
     asset:
@@ -222,33 +222,25 @@ components:
           format: uuid
           type: string
         kind:
-          $ref: '#/components/schemas/kind'
+          $ref: "#/components/schemas/kind"
         version:
-          $ref: '#/components/schemas/version'
+          $ref: "#/components/schemas/version"
         file:
-          $ref: '#/components/schemas/asset_file'
+          $ref: "#/components/schemas/asset_file"
         formats:
           description: additional assets/files associated with the asset
           items:
-            $ref: '#/components/schemas/asset'
+            $ref: "#/components/schemas/asset"
           type: array
         tags:
-          description: A list of metadata tags associated with the asset
-          items:
-            type: string
-          type: array
+          $ref: "#/components/schemas/tags"
         metadata:
-          additionalProperties: true
-          description: Any user supplied metadata for the asset
-          example:
-            project: open-dam
-            rating: 5
-          type: object
+          $ref: "#/components/schemas/metadata"
       required:
-      - asset_id
-      - file
-      - kind
-      - version
+        - asset_id
+        - file
+        - kind
+        - version
       type: object
     asset_create:
       description: The information required to start the workflow to create or update an asset
@@ -263,10 +255,11 @@ components:
           format: uuid
           type: string
       required:
-      - url
+        - url
       type: object
     asset_update:
-      description: A limited view of an asset with only editable fields. Formats,
+      description:
+        A limited view of an asset with only editable fields. Formats,
         tags, and metadata are merged with any existing values
       example:
         kind: image
@@ -279,26 +272,18 @@ components:
           height: 1820
       properties:
         kind:
-          $ref: '#/components/schemas/kind'
+          $ref: "#/components/schemas/kind"
         file:
-          $ref: '#/components/schemas/asset_file'
+          $ref: "#/components/schemas/asset_file"
         formats:
           description: additional assets/files associated with the asset
           items:
-            $ref: '#/components/schemas/asset'
+            $ref: "#/components/schemas/asset"
           type: array
         tags:
-          description: A list of metadata tags associated with the asset
-          items:
-            type: string
-          type: array
+          $ref: "#/components/schemas/tags"
         metadata:
-          additionalProperties: true
-          description: Any user supplied metadata for the asset
-          example:
-            project: open-dam
-            rating: 5
-          type: object
+          $ref: "#/components/schemas/metadata"
       type: object
     version:
       description: version data of an asset
@@ -311,26 +296,39 @@ components:
           description: The version number
           type: number
         timestamp:
-          description: A point in time represented as milliseconds from the Epoch
+          description:
+            A point in time represented as milliseconds from the Epoch
             (UTC)
           type: number
         job_id:
           format: uuid
           type: string
       required:
-      - job_id
-      - number
-      - timestamp
+        - job_id
+        - number
+        - timestamp
       type: object
     kind:
       description: The kind of media
       enum:
-      - image
-      - video
-      - audio
-      - text
-      - unknown
+        - image
+        - video
+        - audio
+        - text
+        - unknown
       type: string
+    tags:
+      description: A list of metadata tags/classifications associated with the asset
+      items:
+        type: string
+      type: array
+    metadata:
+      additionalProperties: true
+      description: Any user supplied or extracted metadata for the asset
+      example:
+        project: open-dam
+        rating: 5
+      type: object
     asset_file:
       description: The file associated with an asset or format
       example:
@@ -364,10 +362,10 @@ components:
           format: float
           type: number
       required:
-      - content_type
-      - name
-      - size
-      - source
+        - content_type
+        - name
+        - size
+        - source
       type: object
     job:
       description: The state of a single job
@@ -383,20 +381,20 @@ components:
         state:
           description: The state of the job
           enum:
-          - queued
-          - processing
-          - failed
-          - completed
-          - cancelled
+            - queued
+            - processing
+            - failed
+            - completed
+            - cancelled
           type: string
         asset_id:
           description: The asset that this job is processing work for
           format: uuid
           type: string
       required:
-      - asset_id
-      - id
-      - state
+        - asset_id
+        - id
+        - state
       type: object
     job_create:
       description: The task information for a workflow
@@ -410,27 +408,28 @@ components:
       properties:
         tasks:
           items:
-            $ref: '#/components/schemas/task'
+            $ref: "#/components/schemas/task"
           type: array
       type: object
     task:
       description: a task to perform on an asset
       example:
         task: extract
-        args: 
+        args:
           - s3://open-dam/3652fdf2-98a7-11ea-bb37-0242ac130002/0
       properties:
         task:
-          description: The name of the task 
+          description: The name of the task
           type: string
         args:
-          description: An array of arguments to use for the task, if left empty will use the results of the previous task.
+          description:
+            An array of arguments to use for the task, if left empty will use the results of the previous task.
             must match the expected arguments for the requested task.
           items:
             type: string
           type: array
       required:
-      - name
+        - name
       type: object
     api_error:
       example:
@@ -444,6 +443,6 @@ components:
           description: A description of the error that occurred
           type: string
       required:
-      - code
-      - message
+        - code
+        - message
       type: object

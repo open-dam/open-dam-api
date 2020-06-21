@@ -18,6 +18,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/open-dam/open-dam-worker/pkg/opendam"
 	"github.com/sirupsen/logrus"
+	"gocloud.dev/blob"
 	"gocloud.dev/docstore"
 	"gocloud.dev/gcerrors"
 )
@@ -38,6 +39,7 @@ type ApiServicer interface {
 // Include any external packages or services that will be required by this service.
 type ApiService struct {
 	docs      *docstore.Collection
+	bucket    *blob.Bucket
 	machinery *machinery.Server
 	client    *http.Client
 	logger    *logrus.Entry
@@ -65,8 +67,14 @@ func NewApiService() ApiServicer {
 		logger.WithError(err).Fatal("failed to open document store connection")
 	}
 
+	bucket, err := blob.OpenBucket(context.Background(), os.Getenv("BLOB_CONNECTION"))
+	if err != nil {
+		logger.WithError(err).Fatal("failed to open blob storage connection")
+	}
+
 	return &ApiService{
 		docs:      c,
+		bucket:    bucket,
 		machinery: server,
 		client:    &http.Client{},
 		logger:    logger,
@@ -112,25 +120,37 @@ func (s *ApiService) PostAsset(assetCreate AssetCreate) (interface{}, error) {
 		return nil, err
 	}
 
+	f, err := s.upload(assetCreate.URL, assetID)
+	if err != nil {
+		return nil, err
+	}
+	f.ContentType = contentType
+
+	b, err := s.bucket.ReadAll(context.Background(), assetID)
+	if err != nil {
+		return nil, err
+	}
+	s.logger.Info(len(b))
+
 	extract, _ := tasks.NewSignature("extract", []tasks.Arg{
-		{Type: "string", Value: assetCreate.URL},
+		{Type: "string", Value: assetID},
 		{Type: "string", Value: assetID},
 	})
 	sigs := []*tasks.Signature{extract}
 	switch kind {
 	case "image":
 		imageAnalysis, _ := tasks.NewSignature("imageanalysis", []tasks.Arg{
-			{Type: "string", Value: assetCreate.URL},
+			{Type: "string", Value: assetID},
 			{Type: "string", Value: assetID},
 		})
 		imageCreation, _ := tasks.NewSignature("imagecreation", []tasks.Arg{
-			{Type: "string", Value: assetCreate.URL},
+			{Type: "string", Value: assetID},
 			{Type: "string", Value: assetID},
 		})
 		sigs = append(sigs, imageAnalysis, imageCreation)
 	case "audio":
 		soundwave, _ := tasks.NewSignature("soundwave", []tasks.Arg{
-			{Type: "string", Value: assetCreate.URL},
+			{Type: "string", Value: assetID},
 			{Type: "string", Value: assetID},
 		})
 		sigs = append(sigs, soundwave)
@@ -145,11 +165,7 @@ func (s *ApiService) PostAsset(assetCreate AssetCreate) (interface{}, error) {
 
 	asset, err := s.PutAsset(assetID, AssetUpdate{
 		Kind: kind,
-		File: opendam.File{
-			Name:        "", //TODO how do we get filename if frontend client is uploading files to storage
-			Source:      assetCreate.URL,
-			ContentType: contentType,
-		},
+		File: f,
 	})
 	if err != nil {
 		// TODO cancel job somehow
@@ -188,6 +204,32 @@ func (s *ApiService) assetKind(URL string) (string, string, error) {
 	}
 	return "unknown", m, nil
 
+}
+
+func (s *ApiService) upload(url, assetID string) (opendam.File, error) {
+	// check that url is already on blob storage and return file with key
+	var file opendam.File
+	wr, err := s.bucket.NewWriter(context.Background(), assetID, nil)
+	if err != nil {
+		return file, err
+	}
+	defer wr.Close()
+
+	resp, err := s.client.Get(url)
+	if err != nil {
+		return file, err
+	}
+	defer resp.Body.Close()
+
+	_, err = wr.ReadFrom(resp.Body)
+	if err != nil {
+		return file, err
+	}
+
+	return opendam.File{
+		Name:   "", //TODO how do we get filename if frontend client is uploading files to storage
+		Source: assetID,
+	}, nil
 }
 
 // GetAsset -

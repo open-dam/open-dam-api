@@ -13,10 +13,13 @@ services:
       BROKER: amqp://rabbitmq:5672/
       RESULT_BACKEND: "amqp://rabbitmq:5672/"
       CONNECTION: mem://collection/assetid
+      BLOB_CONNECTION: file:///dir
       ENVIRONMENT: local
       LOG_LEVEL: debug
     ports:
       - "8080:8080"
+    volumes:
+      - ~/Downloads:/dir
     networks:
       - data
 

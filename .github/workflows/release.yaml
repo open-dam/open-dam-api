@@ -21,3 +21,4 @@ jobs:
         run: |
           docker login docker.pkg.github.com -u Jesse0Michael -p ${{ secrets.PAT }}
           docker push docker.pkg.github.com/open-dam/open-dam-api/open-dam-api:${REF##*/}
+          docker push docker.pkg.github.com/open-dam/open-dam-api/open-dam-api:latest
