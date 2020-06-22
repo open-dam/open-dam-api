@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/open-dam/open-dam-api/compare/v1.2.5...v1.2.6) (2020-06-22)
+
+### Bug Fixes
+
+- fix nil map assignment ([96dbbbd](https://github.com/open-dam/open-dam-api/commit/96dbbbdff83b41b3a6f64ab2358e2a549822ad38))
+- remove aditional properties from metadata ([18ba388](https://github.com/open-dam/open-dam-api/commit/18ba388ded3e5ba212b290b98fa7be7b4c96557c))
+
 ## [1.2.5](https://github.com/open-dam/open-dam-api/compare/v1.2.4...v1.2.5) (2020-06-21)
 
 ### Bug Fixes
