@@ -323,7 +323,6 @@ components:
         type: string
       type: array
     metadata:
-      additionalProperties: true
       description: Any user supplied or extracted metadata for the asset
       example:
         project: open-dam
