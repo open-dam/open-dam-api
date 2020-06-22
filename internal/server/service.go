@@ -265,6 +265,9 @@ func (s *ApiService) PutAsset(assetId string, assetUpdate AssetUpdate) (interfac
 	//TODO handle duplicate
 	asset.Tags = append(asset.Tags, assetUpdate.Tags...)
 
+	if asset.Metadata == nil {
+		asset.Metadata = map[string]interface{}{}
+	}
 	for k, v := range assetUpdate.Metadata {
 		asset.Metadata[k] = v
 	}
