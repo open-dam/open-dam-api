@@ -1,3 +1,10 @@
+## [1.2.10](https://github.com/open-dam/open-dam-api/compare/v1.2.9...v1.2.10) (2020-06-23)
+
+### Continuous Integration
+
+- don't lint on master ([134d74a](https://github.com/open-dam/open-dam-api/commit/134d74aa2680a8305b0776e0ee49f59e72f887ef))
+- don't lint on master ([52702bf](https://github.com/open-dam/open-dam-api/commit/52702bf90bbf0e1f638184290d5f74ab4778e449))
+
 ## [1.2.9](https://github.com/open-dam/open-dam-api/compare/v1.2.8...v1.2.9) (2020-06-23)
 
 ### Continuous Integration
