@@ -146,6 +146,8 @@ func (s *ApiService) PostAsset(assetCreate AssetCreate) (interface{}, error) {
 		imageCreation, _ := tasks.NewSignature("imagecreation", []tasks.Arg{
 			{Type: "string", Value: assetID},
 			{Type: "string", Value: assetID},
+			{Type: "int", Value: 250},
+			{Type: "int", Value: 250},
 		})
 		sigs = append(sigs, imageAnalysis, imageCreation)
 	case "audio":
