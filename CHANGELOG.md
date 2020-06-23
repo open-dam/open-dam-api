@@ -1,3 +1,13 @@
+## [1.2.8](https://github.com/open-dam/open-dam-api/compare/v1.2.7...v1.2.8) (2020-06-23)
+
+### Continuous Integration
+
+- linter 2.2 ([8c99b04](https://github.com/open-dam/open-dam-api/commit/8c99b0496f83dfbf390a8a085feb2584c64d602b))
+
+### Other
+
+- Merge branch 'master' of ssh://github.com/open-dam/open-dam-api ([c68d048](https://github.com/open-dam/open-dam-api/commit/c68d04884bfe59e7381fe12e5a5512d071c4bf05))
+
 ## [1.2.7](https://github.com/open-dam/open-dam-api/compare/v1.2.6...v1.2.7) (2020-06-23)
 
 ### Bug Fixes
