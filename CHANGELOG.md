@@ -1,3 +1,17 @@
+## [1.2.7](https://github.com/open-dam/open-dam-api/compare/v1.2.6...v1.2.7) (2020-06-23)
+
+### Bug Fixes
+
+- add image creation parameters ([ca654fa](https://github.com/open-dam/open-dam-api/commit/ca654fa3fc8ac5edf54e157407d3b2c6fe0dd7e6))
+
+### Documentation
+
+- add license ([73b0995](https://github.com/open-dam/open-dam-api/commit/73b0995d31af5c155f4da90e5a27f2ad83b583a9))
+
+### Other
+
+- add super linter ([e14aeeb](https://github.com/open-dam/open-dam-api/commit/e14aeebac175bd36e3599bb38b4a4dfdb9340ba8))
+
 ## [1.2.6](https://github.com/open-dam/open-dam-api/compare/v1.2.5...v1.2.6) (2020-06-22)
 
 ### Bug Fixes
